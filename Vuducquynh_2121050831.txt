@@ -1,0 +1,57 @@
+SELECT 
+    COUNT(DISTINCT SUPPLIER) AS company_count
+FROM 
+    sales
+WHERE 
+    ITEM_TYPE = 'WINE';
+
+
+
+
+WITH RankedSales AS (
+    SELECT 
+        SUPPPLIER, 
+        ITEM_TYPE, 
+        MONTH,
+        COUNT(*) AS product_count,
+        ROW_NUMBER() OVER (PARTITION BY MONTH ORDER BY COUNT(*) DESC) AS rank
+    FROM 
+        sales
+    WHERE 
+        MONTH IN (1, 2, 3)
+    GROUP BY 
+        SUPPLIER, ITEM_TYPE, MONTH
+)
+SELECT 
+    SUPPLIER, 
+    ITEM_TYPE, 
+    MONTH, 
+    product_count
+FROM 
+    RankedSales
+WHERE 
+    rank <= 3
+ORDER BY 
+    MONTH, product_COUNT DESC;
+
+
+SELECT 
+    MONTH, 
+    ITEM_TYPE, 
+    COUNT(*) AS product_count
+FROM 
+    sales
+GROUP BY 
+    MONTH, ITEM_TYPE
+ORDER BY 
+    MONTH, ITEM_TYPE;
+
+
+SELECT 
+    SUPPLIER
+FROM 
+    sales
+WHERE 
+    ITEM_TYPE = 'WINE'
+GROUP BY 
+    SUPPLIER;
